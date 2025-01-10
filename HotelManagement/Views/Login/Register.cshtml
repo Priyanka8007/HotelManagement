@@ -1,0 +1,46 @@
+﻿@model HotelManagement.Models.DTOs.RegisterDto
+
+<title>@ViewData["Title"]</title>  <!-- Use ViewData to dynamically set the title -->
+
+<form method="post">
+    <div class="form-group">
+        <label for="UserName">Email</label>
+        <input type="email" id="UserName" name="UserName" class="form-control" value="@Model?.UserName" required />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Password">Password</label>
+        <input type="password" id="Password" name="Password" class="form-control" required />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    @* <div class="form-group">
+        <label for="Roles">Roles</label>
+        <select id="Roles" name="Roles" class="form-control" required>
+            <option value="SuperAdmin">SuperAdmin</option>
+            <option value="Admin">Admin</option>
+            <option value="User">User</option>
+            <option value="Kitchen">Kitchen</option>
+        </select>
+        <span asp-validation-for="Roles" class="text-danger"></span>
+    </div> *@
+    <div class="form-group">
+        <label for="Roles">Roles</label>
+        <select id="Roles" name="Roles" class="form-control">
+            <option value="SuperAdmin">SuperAdmin</option>
+            <option value="Admin">Admin</option>
+            <option value="User">User</option>
+            <option value="Kitchen">Kitchen</option>
+        </select>
+        <span asp-validation-for="Roles" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Register</button>
+    </div>
+
+    <div>
+        <a href="/Login/Login">Already have an account? Login here.</a>
+    </div>
+</form>

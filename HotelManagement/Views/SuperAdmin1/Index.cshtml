@@ -1,0 +1,380 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hotel Management - Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <!-- Section 1: Counts -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5>Total Hotels</h5>
+                        <h3 id="totalHotel">100</h3> <!-- Replace with dynamic count -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5>Active Hotels</h5>
+                        <h3 id="activeHotel">80</h3> <!-- Replace with dynamic count -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5>Renewed Hotels</h5>
+                        <h3 id="renewHotel">20</h3> <!-- Replace with dynamic count -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Hotel Table -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4>Added Hotels</h4>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Hotel Name</th>
+                            <th>Owner Name</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hotelTableBody">
+                      @*   <!-- Dynamic rows will be appended here -->
+                        <tr>
+                            <td>1</td>
+                            <td>Sample Hotel</td>
+                            <td>John Doe</td>
+                            <td>
+                                <input type="checkbox" class="status-toggle" checked data-hotel-id="1">
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary edit-btn" data-hotel-id="1">Edit</button>
+                                <button class="btn btn-sm btn-danger cancel-btn" data-hotel-id="1">Cancel</button>
+                            </td>
+                        </tr> *@
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Edit Hotel Modal -->
+        <div class="modal fade" id="editHotelModal" tabindex="-1" aria-labelledby="editHotelModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editHotelModalLabel">Edit Hotel</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editHotelForm">
+                            <input type="hidden" id="editHotelId" />
+                            <div class="mb-3">
+                                <label for="editHotelName" class="form-label">Hotel Name</label>
+                                <input type="text" class="form-control" id="editHotelName" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editOwnerName" class="form-label">Owner Name</label>
+                                <input type="text" class="form-control" id="editOwnerName" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editMobileNo" class="form-label">Mobile Number</label>
+                                <input type="text" class="form-control" id="editMobileNo" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editAddress" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="editAddress" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editGSTNumber" class="form-label">GST Number</label>
+                                <input type="text" class="form-control" id="editGSTNumber" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editLicenseNumber" class="form-label">License Number</label>
+                                <input type="text" class="form-control" id="editLicenseNumber" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editRenewDate" class="form-label">Renew Date</label>
+                                <input type="date" class="form-control" id="editRenewDate" />
+                            </div>
+                            <div class="form-check mb-3">
+                                <input type="checkbox" class="form-check-input" id="editIsActiveCheckbox" />
+                                <label class="form-check-label" for="editIsActiveCheckbox">Is Active</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Section 3: Add Hotel Button -->
+        <div class="row">
+            <div class="col-12 text-end">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addHotelModal">Add Hotel</button>
+            </div>
+        </div>
+
+        <!-- Add Hotel Modal -->
+        <div class="modal fade" id="addHotelModal" tabindex="-1" aria-labelledby="addHotelModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addHotelModalLabel">Add New Hotel</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addHotelForm">
+                            <div class="mb-3">
+                                <label for="hotelName" class="form-label">Hotel Name</label>
+                                <input type="text" class="form-control" id="hotelName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ownerName" class="form-label">Owner Name</label>
+                                <input type="text" class="form-control" id="ownerName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="MobileNumber" class="form-label">Mobile Number</label>
+                                <input type="text" class="form-control" id="MobileNo" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="Address" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="Address" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="GSTNumber" class="form-label">GSTNumber</label>
+                                <input type="text" class="form-control" id="GSTNumber" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="LicenseNumber" class="form-label">LicenseNumber</label>
+                                <input type="text" class="form-control" id="LicenseNumber" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="RenewDate" class="form-label">RenewDate</label>
+                                <input type="date" class="form-control" id="RenewDate" required>
+
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // Fetch hotels data on page load
+
+            Getmodel();
+
+        });
+
+          function Getmodel()
+          {
+            $.ajax({
+                url: '/SuperAdmin1/GetHotels', // API endpoint
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        $('#hotelTableBody').empty();
+
+                        const hotels = response.data;
+                        let activeHotelCount = 0; // Variable to keep track of active hotels
+
+                        hotels.forEach((hotel, index) => {
+                            // Check the isActive property to dynamically mark the checkbox
+                            const statusChecked = hotel.isActive ? 'checked' : '';
+                            // If the hotel is active, increment the active hotel count
+                            if (hotel.isActive) {
+                                activeHotelCount++;
+                            }
+
+                            const newRow = `
+                            <tr>
+                                <td>${hotel.id}</td>
+                                <td>${hotel.hotelName}</td>
+                                <td>${hotel.ownerName}</td>
+                                <td>
+                                    <input type="checkbox" class="status-toggle" ${statusChecked} data-hotel-id="${hotel.id}">
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary edit-btn" data-hotel-id="${hotel.id}">Edit</button>
+                                    <button class="btn btn-sm btn-danger cancel-btn" data-hotel-id="${hotel.id}">Cancel</button>
+                                </td>
+                            </tr>
+                        `;
+                            $('#hotelTableBody').append(newRow);
+                        });
+
+                        // Update the total number of hotels
+                        const totalHotelCount = hotels.length;
+                        $('#totalHotel').text(totalHotelCount);
+                        // Update the Active Hotels count
+                        $('#activeHotel').text(activeHotelCount); // Dynamically update active hotels count
+                    } else {
+                        alert('Failed to load hotels: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('An error occurred: ' + error);
+                }
+            });
+
+
+          }
+
+         
+
+
+            // Handle Add Hotel Form Submission
+            $('#addHotelForm').on('submit', function (e) {
+                e.preventDefault();
+            const newHotel = {
+                HotelName: $('#hotelName').val(),
+                OwnerName: $('#ownerName').val(),
+                MobileNo: $('#MobileNo').val(),
+                Address: $('#Address').val(),
+                GSTNumber: $('#GSTNumber').val(),
+                LicenseNumber: $('#LicenseNumber').val(),
+                RenewDate: $('#RenewDate').val(),
+              //  IsActive: $('#isActiveCheckbox').is(':checked') // Dynamically get the checkbox status
+            };
+            console.log(newHotel);
+                // Use AJAX to send data to the AddHotel method
+                $.ajax({
+                    url: '/SuperAdmin1/AddHotel', // URL to the AddHotel method in your controller
+                    type: 'POST', // HTTP method
+                    contentType: 'application/json', // Specify JSON format
+                    data: JSON.stringify(newHotel), // Convert newHotel object to JSON string
+                    success: function (response) {
+                        // Handle success
+                        console.log(response);
+                        if (response.success) {
+                            alert('Hotel added successfully!');
+                        Getmodel();
+             
+                        } else {
+                            alert('Failed to add hotel: ' + response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        alert('An error occurred: ' + error);
+                    }
+                });
+
+       
+
+                // Clear form and close modal
+                $('#addHotelForm')[0].reset();
+                $('#addHotelModal').modal('hide');
+            });
+
+        $(document).on('click', '.edit-btn', function () {
+            const hotelId = $(this).data('hotel-id');
+
+            // Fetch the hotel details by ID
+            $.ajax({
+                url: `/SuperAdmin1/GetHotelById?id=${hotelId}`,
+                type: 'GET',
+                success: function (hotel) {
+                    // Populate the modal fields with hotel data
+                    $('#editHotelId').val(hotel.id);
+                    $('#editHotelName').val(hotel.hotelName);
+                    $('#editOwnerName').val(hotel.ownerName);
+                    $('#editMobileNo').val(hotel.mobileNo);
+                    $('#editAddress').val(hotel.address);
+                    $('#editGSTNumber').val(hotel.gstNumber);
+                    $('#editLicenseNumber').val(hotel.licenseNumber);
+                    $('#editRenewDate').val(hotel.renewDate);
+                    $('#editIsActiveCheckbox').prop('checked', hotel.isActive);
+
+                    // Show the modal
+                    $('#editHotelModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    alert('Failed to fetch hotel details: ' + error);
+                }
+            });
+        });
+
+        // Handle Edit Hotel Form Submission
+        $('#editHotelForm').on('submit', function (e) {
+            e.preventDefault();
+
+            const updatedHotel = {
+                Id: $('#editHotelId').val(),
+                HotelName: $('#editHotelName').val(),
+                OwnerName: $('#editOwnerName').val(),
+                MobileNo: $('#editMobileNo').val(),
+                Address: $('#editAddress').val(),
+                GSTNumber: $('#editGSTNumber').val(),
+                LicenseNumber: $('#editLicenseNumber').val(),
+                RenewDate: $('#editRenewDate').val(),
+                IsActive: $('#editIsActiveCheckbox').is(':checked')
+            };
+
+            // Send updated data to the server
+            $.ajax({
+                url: '/SuperAdmin1/EditHotel',
+                type: 'PUT', // Use PUT for updating
+                contentType: 'application/json',
+                data: JSON.stringify(updatedHotel),
+                success: function (response) {
+                    if (response.success) {
+                        alert('Hotel updated successfully!');
+                        $('#editHotelModal').modal('hide');
+                        Getmodel(); // Refresh the hotel table
+                    } else {
+                        alert('Failed to update hotel: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('An error occurred: ' + error);
+                }
+            });
+        });
+       
+        $(document).on('click', '.cancel-btn', function () {
+            const hotelId = $(this).data('hotel-id');
+
+            if (confirm("Are you sure you want to cancel this hotel?")) {
+                $.ajax({
+                    url: `/SuperAdmin1/CancelHotel?hotelId=${hotelId}`,  // URL for the CancelHotel method
+                    type: 'DELETE',  // HTTP DELETE method
+                    success: function (response) {
+                        if (response.success) {
+                            alert('Hotel cancelled successfully!');
+                            Getmodel();  // Refresh the hotel table
+                        } else {
+                            alert('Failed to cancel hotel: ' + response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('An error occurred: ' + error);
+                    }
+                });
+            }
+        });
+
+     
+   
+    </script>
+</body>
+</html>
+ 

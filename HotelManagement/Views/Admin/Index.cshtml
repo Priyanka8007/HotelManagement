@@ -1,0 +1,96 @@
+﻿@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 20%;
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-right: 1px solid #ccc;
+        }
+
+        .content {
+            width: 80%;
+            padding: 15px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+            .sidebar ul li {
+                margin: 10px 0;
+            }
+
+                .sidebar ul li a {
+                    text-decoration: none;
+                    color: #007bff;
+                    cursor: pointer;
+                }
+
+                    .sidebar ul li a:hover {
+                        text-decoration: underline;
+                    }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Welcome, @Context.Session.GetString("OwnerName")!</h1>
+        <p>Hotel: @Context.Session.GetString("HotelName")</p>
+    </div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h3>Hotel Management</h3>
+            <ul>
+                <li><a href="#" class="nav-link" data-url="/Stock/Index">View Stock</a></li>
+                <li><a href="#" class="nav-link" data-url="/Stock/AddItem">Add Stock Item</a></li>
+                <li><a href="#" class="nav-link" data-url="/Bookings/Index">Manage Bookings</a></li>
+                <li><a href="#" class="nav-link" data-url="/Staff/Index">Manage Staff</a></li>
+                <li><a href="#" class="nav-link" data-url="/Reports/Index">View Reports</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="content" id="content-area">
+            <h2>Welcome to the Admin Dashboard</h2>
+            <p>Select an option from the menu to manage your hotel's data.</p>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $(".nav-link").click(function (e) {
+                e.preventDefault(); // Prevent default link behavior
+                var url = $(this).data("url"); // Get the URL from the data attribute
+
+                // Load the content into the content area
+                $("#content-area").load(url, function (response, status, xhr) {
+                    if (status === "error") {
+                        $("#content-area").html("<p>Error loading page: " + xhr.status + " " + xhr.statusText + "</p>");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

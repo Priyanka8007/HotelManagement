@@ -1,0 +1,102 @@
+﻿@model HotelManagement.Models.DTOs.LoginRequest
+
+<title>@ViewData["Title"]</title>  <!-- Use ViewData to dynamically set the title -->
+<!-- Add custom styling in the head section -->
+<!-- Add custom styling in the head section -->
+<!-- Add custom styling in the head section -->
+<style>
+    .login-form {
+        max-width: 400px; /* Set a max-width for the form */
+        margin: 0 auto; /* Center the form horizontally */
+        padding: 20px; /* Add padding for better spacing */
+        background-color: #f8f9fa; /* Light background for the form */
+        border-radius: 8px; /* Rounded corners */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a light shadow */
+    }
+
+    .form-group label {
+        display: block; /* Make the label a block element to be above the input */
+        font-weight: bold; /* Make the label text bold */
+        margin-bottom: 8px; /* Space between label and input */
+    }
+
+    .form-control {
+        width: 100%; /* Make input take up full width of its container */
+        max-width: 100%; /* Ensure no input overflows */
+        padding: 10px; /* Add padding inside the textboxes */
+        font-size: 1rem; /* Ensure consistent font size */
+    }
+
+    .alert {
+        margin-top: 15px; /* Add space above the alert */
+    }
+
+    .btn {
+        width: 100%; /* Make button take up full width */
+        padding: 12px; /* Add padding to the button */
+    }
+
+    .container {
+        height: 100vh; /* Full viewport height */
+        display: flex; /* Use flexbox for centering */
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+    }
+
+    .form-group {
+        margin-bottom: 15px; /* Space between form groups */
+    }
+
+    a {
+        display: block; /* Make the link block level */
+        margin-top: 10px; /* Space above the link */
+        text-align: center; /* Center the link text */
+    }
+</style>
+
+
+
+
+<form method="post">
+    <div class="form-group">
+        <label for="UserName">Username</label>
+        <input type="email" id="UserName" name="UserName" class="form-control" value="@Model?.UserName " required />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Password">Password</label>
+        <input type="password" id="Password" name="Password" class="form-control" required />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Roles">Roles</label>
+        <select id="Roles" name="Roles" class="form-control">
+            <option value="SuperAdmin">SuperAdmin</option>
+            <option value="Admin">Admin</option>
+            <option value="User">User</option>
+            <option value="Kitchen">Kitchen</option>
+        </select>
+        <span asp-validation-for="Roles" class="text-danger"></span>
+    </div>
+
+    @if (ViewData.ModelState != null && ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
+    {
+        <div class="alert alert-danger">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p>@error.ErrorMessage</p>
+            }
+        </div>
+    }
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Login</button>
+    </div>
+
+    <div>
+        <a href="/Account/Register">Don't have an account? Register here.</a>
+    </div>
+</form>
+
