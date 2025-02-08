@@ -1,4 +1,7 @@
-﻿
+﻿@{
+
+    Layout = null; // No layout applied
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,7 +9,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+    body {
+    background-image: url('/Images/Nineth.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    height: 100vh;
+    }
+
+    .container {
+  /*   background-color: rgba(255, 255, 255, 0.7); /* Optional */ */
+    border-radius: 8px;
+    padding: 20px;
+    }
+    </style>
 </head>
+
 <body>
     <div class="container mt-4">
         <!-- Section 1: Counts -->
@@ -52,23 +72,21 @@
                         </tr>
                     </thead>
                     <tbody id="hotelTableBody">
-                      @*   <!-- Dynamic rows will be appended here -->
-                        <tr>
-                            <td>1</td>
-                            <td>Sample Hotel</td>
-                            <td>John Doe</td>
-                            <td>
-                                <input type="checkbox" class="status-toggle" checked data-hotel-id="1">
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-primary edit-btn" data-hotel-id="1">Edit</button>
-                                <button class="btn btn-sm btn-danger cancel-btn" data-hotel-id="1">Cancel</button>
-                            </td>
-                        </tr> *@
+                 
                     </tbody>
                 </table>
             </div>
         </div>
+       @*  <div id="paginationControls" class="d-flex justify-content-center mt-3"></div> *@
+     @*    <div>
+            <button id="prevButton" disabled>Previous</button>
+            <span>Page: <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+            <button id="nextButton" disabled>Next</button>
+        </div> *@
+        <div id="paginationControls" class="mt-3">
+            <!-- Pagination buttons and page info will be dynamically populated here -->
+        </div>
+
 
         <!-- Edit Hotel Modal -->
         <div class="modal fade" id="editHotelModal" tabindex="-1" aria-labelledby="editHotelModalLabel" aria-hidden="true">
@@ -177,32 +195,115 @@
     </div>
 
     <script>
+        // let currentPage = 1; // Track the current page
+        // const pageSize = 3; // Number of records per page
+        // $(document).ready(function () {
+        //     // Fetch hotels data on page load     
+        //     Getmodel(currentPage); // Load the first page
+        // });
+
+        // function Getmodel(page = 1) {
+        //     $.ajax({
+        //         url: `/SuperAdmin1/GetHotels?page=${page}&pageSize=${pageSize}`, // API endpoint with pagination parameters
+        //         type: 'GET',
+        //         success: function (response) {
+        //             if (response.success) {
+        //                 $('#hotelTableBody').empty();
+
+        //                 const hotels = response.data;
+        //                 let activeHotelCount = 0; // Variable to keep track of active hotels
+
+        //                 hotels.forEach((hotel) => {
+        //                     // Check the isActive property to dynamically mark the checkbox
+        //                     const statusChecked = hotel.isActive ? 'checked' : '';
+        //                     // If the hotel is active, increment the active hotel count
+        //                     if (hotel.isActive) {
+        //                         activeHotelCount++;
+        //                     }
+
+        //                     const newRow = `
+        //                     <tr>
+        //                         <td>${hotel.id}</td>
+        //                         <td>${hotel.hotelName}</td>
+        //                         <td>${hotel.ownerName}</td>
+        //                         <td>
+        //                             <input type="checkbox" class="status-toggle" ${statusChecked} data-hotel-id="${hotel.id}">
+        //                         </td>
+        //                         <td>
+        //                             <button class="btn btn-sm btn-primary edit-btn" data-hotel-id="${hotel.id}">Edit</button>
+        //                             <button class="btn btn-sm btn-danger cancel-btn" data-hotel-id="${hotel.id}">Cancel</button>
+        //                         </td>
+        //                     </tr>
+        //                 `;
+        //                     $('#hotelTableBody').append(newRow);
+        //                 });
+
+        //                 // Update total hotels and active hotels count
+        //                 $('#totalHotel').text(response.totalHotels); // Total hotels from server
+        //                 $('#activeHotel').text(activeHotelCount); // Dynamically calculated active hotels
+
+        //                 // Update pagination controls
+        //                 updatePaginationControls(response.currentPage, response.totalPages);
+        //             } else {
+        //                 alert('Failed to load hotels: ' + response.message);
+        //             }
+        //         },
+        //         error: function (xhr, status, error) {
+        //             alert('An error occurred: ' + error);
+        //         }
+        //     });
+        // }
+
+        // // Function to update pagination controls (Previous/Next buttons)
+        // function updatePaginationControls(currentPage, totalPages) {
+        //     $('#paginationControls').empty(); // Clear existing controls
+
+        //     const prevButton = `<button id="prevButton" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>`;
+        //     const nextButton = `<button id="nextButton" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+        //     const pageInfo = `<span>Page ${currentPage} of ${totalPages}</span>`;
+
+        //     $('#paginationControls').append(prevButton + pageInfo + nextButton);
+
+        //     // Attach click events to buttons
+        //     $('#prevButton').off('click').on('click', () => {
+        //         if (currentPage > 1) {
+        //             Getmodel(currentPage - 1);
+        //         }
+        //     });
+        //     $('#nextButton').off('click').on('click', () => {
+        //         if (currentPage < totalPages) {
+        //             Getmodel(currentPage + 1);
+        //         }
+        //     });
+        // }
+
+        let currentPage = 1; // Track the current page
+        const pageSize = 3; // Number of records per page
+
         $(document).ready(function () {
             // Fetch hotels data on page load
-
-            Getmodel();
-
+            Getmodel(currentPage); // Load the first page
         });
 
-          function Getmodel()
-          {
+        function Getmodel(page = 1) {
             $.ajax({
-                url: '/SuperAdmin1/GetHotels', // API endpoint
+                url: `/SuperAdmin1/GetHotels?page=${page}&pageSize=${pageSize}`, // API endpoint with pagination parameters
                 type: 'GET',
                 success: function (response) {
                     if (response.success) {
                         $('#hotelTableBody').empty();
 
                         const hotels = response.data;
-                        let activeHotelCount = 0; // Variable to keep track of active hotels
+                        // let activeHotelCount = 0; // Variable to keep track of active hotels
 
-                        hotels.forEach((hotel, index) => {
+                        hotels.forEach((hotel) => {
                             // Check the isActive property to dynamically mark the checkbox
                             const statusChecked = hotel.isActive ? 'checked' : '';
+
                             // If the hotel is active, increment the active hotel count
-                            if (hotel.isActive) {
-                                activeHotelCount++;
-                            }
+                            // if (hotel.isActive) {
+                            //     activeHotelCount++;
+                            // }
 
                             const newRow = `
                             <tr>
@@ -221,11 +322,12 @@
                             $('#hotelTableBody').append(newRow);
                         });
 
-                        // Update the total number of hotels
-                        const totalHotelCount = hotels.length;
-                        $('#totalHotel').text(totalHotelCount);
-                        // Update the Active Hotels count
-                        $('#activeHotel').text(activeHotelCount); // Dynamically update active hotels count
+                        // Update total hotels and active hotels count
+                        $('#totalHotel').text(response.totalHotels); // Total hotels from server
+                        $('#activeHotel').text(response.totalActiveHotels); // Total active hotels from server
+
+                        // Update pagination controls
+                        updatePaginationControls(response.currentPage, response.totalPages);
                     } else {
                         alert('Failed to load hotels: ' + response.message);
                     }
@@ -234,11 +336,90 @@
                     alert('An error occurred: ' + error);
                 }
             });
+        }
+
+        // Function to update pagination controls (Previous/Next buttons)
+        function updatePaginationControls(currentPage, totalPages) {
+            $('#paginationControls').empty(); // Clear existing controls
+
+            const prevButton = `<button id="prevButton" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>`;
+            const nextButton = `<button id="nextButton" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+            const pageInfo = `<span>Page ${currentPage} of ${totalPages}</span>`;
+
+            $('#paginationControls').append(prevButton + pageInfo + nextButton);
+
+            // Attach click events to buttons
+            $('#prevButton').off('click').on('click', () => {
+                if (currentPage > 1) {
+                    currentPage--; // Decrease the page number
+                    Getmodel(currentPage); // Load the previous page
+                }
+            });
+
+            $('#nextButton').off('click').on('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++; // Increase the page number
+                    Getmodel(currentPage); // Load the next page
+                }
+            });
+        }
 
 
-          }
 
-         
+          // function Getmodel()
+          // {
+            
+          //   $.ajax({
+          //       url: '/SuperAdmin1/GetHotels', // API endpoint
+          //       type: 'GET',
+          //       success: function (response) {
+          //           if (response.success) {
+          //               $('#hotelTableBody').empty();
+
+          //               const hotels = response.data;
+          //               let activeHotelCount = 0; // Variable to keep track of active hotels
+
+          //               hotels.forEach((hotel, index) => {
+          //                   // Check the isActive property to dynamically mark the checkbox
+          //                   const statusChecked = hotel.isActive ? 'checked' : '';
+          //                   // If the hotel is active, increment the active hotel count
+          //                   if (hotel.isActive) {
+          //                       activeHotelCount++;
+          //                   }
+
+          //                   const newRow = `
+          //                   <tr>
+          //                       <td>${hotel.id}</td>
+          //                       <td>${hotel.hotelName}</td>
+          //                       <td>${hotel.ownerName}</td>
+          //                       <td>
+          //                           <input type="checkbox" class="status-toggle" ${statusChecked} data-hotel-id="${hotel.id}">
+          //                       </td>
+          //                       <td>
+          //                           <button class="btn btn-sm btn-primary edit-btn" data-hotel-id="${hotel.id}">Edit</button>
+          //                           <button class="btn btn-sm btn-danger cancel-btn" data-hotel-id="${hotel.id}">Cancel</button>
+          //                       </td>
+          //                   </tr>
+          //               `;
+          //                   $('#hotelTableBody').append(newRow);
+          //               });
+
+          //               // Update the total number of hotels
+          //               const totalHotelCount = hotels.length;
+          //               $('#totalHotel').text(totalHotelCount);
+          //               // Update the Active Hotels count
+          //               $('#activeHotel').text(activeHotelCount); // Dynamically update active hotels count
+          //           } else {
+          //               alert('Failed to load hotels: ' + response.message);
+          //           }
+          //       },
+          //       error: function (xhr, status, error) {
+          //           alert('An error occurred: ' + error);
+          //       }
+          //   });
+
+
+          // }
 
 
             // Handle Add Hotel Form Submission
@@ -266,6 +447,7 @@
                         console.log(response);
                         if (response.success) {
                             alert('Hotel added successfully!');
+                        alert(`Username: ${response.username}\nPassword: ${response.password}`);
                         Getmodel();
              
                         } else {

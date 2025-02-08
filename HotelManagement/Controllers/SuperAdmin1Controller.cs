@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Drawing.Printing;
 
 namespace HotelManagement.Controllers
 {
@@ -21,17 +22,72 @@ namespace HotelManagement.Controllers
         {
             return View();
         }
+        //[HttpGet]
+        //public async Task<IActionResult> GetHotels()
+        //{
+        //    try
+        //    {
+        //        // Fetch data from the database
+        //        var hotels = await _context.Hotels.ToListAsync();
 
+        //        // Return the data as JSON
+        //        return Json(new { success = true, data = hotels });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Handle exceptions and return an error response
+        //        return Json(new { success = false, message = "An error occurred: " + ex.Message });
+        //    }
+        //}
         [HttpGet]
-        public async Task<IActionResult> GetHotels()
+        public async Task<IActionResult> GetHotels(int page = 1, int pageSize = 3)
         {
             try
             {
-                // Fetch data from the database
-                var hotels = await _context.Hotels.ToListAsync();
+                // Validate inputs
+                if (page < 1 || pageSize < 1)
+                {
+                    return Json(new { success = false, message = "Invalid page or pageSize parameters." });
+                }
+
+                // Calculate starting and ending row numbers
+                int startRow = (page - 1) * pageSize + 1;
+                int endRow = page * pageSize;
+
+                // Raw SQL query to use ROW_NUMBER() for pagination
+                var query = @$"
+            SELECT *
+            FROM (
+                SELECT 
+                    ROW_NUMBER() OVER (ORDER BY Id ASC) AS RowNum, 
+                    *
+                FROM Hotels
+            ) AS RowConstrainedResult
+            WHERE RowNum BETWEEN {startRow} AND {endRow}
+            ORDER BY RowNum";
+              //  var hotels = await _context.Hotels.ToListAsync();
+
+                // Execute raw SQL query
+                var paginatedHotels = await _context.Hotels.FromSqlRaw(query).ToListAsync();
+
+                // Fetch total hotel count
+                var totalHotels = await _context.Hotels.CountAsync();
+                var totalActiveHotels = _context.Hotels.Count(static h => h.IsActive);
+
+                // Calculate total pages
+                var totalPages = (int)Math.Ceiling((double)totalHotels / pageSize);
 
                 // Return the data as JSON
-                return Json(new { success = true, data = hotels });
+                return Json(new
+                {
+                    success = true,
+                    data = paginatedHotels,
+                    totalHotels = totalHotels,
+                    totalActiveHotels= totalActiveHotels,
+                    totalPages = totalPages,
+                    currentPage = page,
+                    pageSize = pageSize
+                });
             }
             catch (Exception ex)
             {
@@ -39,6 +95,35 @@ namespace HotelManagement.Controllers
                 return Json(new { success = false, message = "An error occurred: " + ex.Message });
             }
         }
+
+
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetHotels()
+        //{
+        //    int page = 1;
+        //    const int pageSize = 3; // Number of records to display per page
+        //    try
+        //    {
+        //        // Fetch data from the database
+        //        var hotels = await _context.Hotels.ToListAsync();
+
+        //        //total hotel count
+        //        var totalHotels = await _context.Hotels.CountAsync();
+
+
+        //        var paginatedhotels = hotels.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        //        // Return the data as JSON
+        //        return Json(new { success = true, data = paginatedhotels });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Handle exceptions and return an error response
+        //        return Json(new { success = false, message = "An error occurred: " + ex.Message });
+        //    }
+        //}
+
+
 
         [HttpGet]
         public async Task<IActionResult> GetHotelById(int id)

@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Items Details</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            width: 250px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Get Hotel Item Details</h1>
+    <div>
+        <input type="text" id="hotelNameInput" placeholder="Enter Hotel Name">
+        <button id="fetchDetailsBtn">Fetch Details</button>
+    </div>
+
+    <table id="hotelDetailsTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>Hotel Name</th>
+                <th>Owner Name</th>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody id="hotelDetailsBody">
+            <!-- Data will be dynamically inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready(function () {
+            $("#fetchDetailsBtn").click(function () {
+                // Get the hotel name from the input field
+                var hotelName = $("#hotelNameInput").val();
+
+                if (!hotelName) {
+                    alert("Please enter a hotel name.");
+                    return;
+                }
+
+                // AJAX call to the server
+                $.ajax({
+                    url: '/Stock/GetHotelItemDetails', // Replace with your controller action endpoint
+                    type: 'GET',
+                    data: { hotelName: hotelName },
+                    success: function (response) {
+                        // Clear existing table data
+                        $("#hotelDetailsBody").empty();
+
+                        // Check if response has data
+                        if (response.length > 0) {
+                            response.forEach(item => {
+                                var row = `
+                                    <tr>
+                                        <td>${item.hotelName}</td>
+                                        <td>${item.ownerName}</td>
+                                        <td>${item.itemName}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>${item.unitPrice}</td>
+                                        <td>${item.totalPrice}</td>
+                                    </tr>
+                                `;
+                                $("#hotelDetailsBody").append(row);
+                            });
+
+                            // Show the table
+                            $("#hotelDetailsTable").show();
+                        } else {
+                            alert("No data found for the given hotel name.");
+                            $("#hotelDetailsTable").hide();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert("An error occurred: " + error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+﻿
+@{
+    Layout = null;
+}
+@model IEnumerable<HotelManagement.Models.Domain.HotelItemDetails>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Items</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        tr:hover {
+            background-color: blueviolet;
+        }
+
+        .edit-buttons {
+            display: none;
+        }
+
+        .edit-mode .edit-buttons {
+            display: inline-block;
+        }
+
+        .edit-mode .static-value {
+            display: none;
+        }
+
+        .edit-mode .edit-value {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hotel Items</h1>
+
+    <table>
+        <thead>
+            <tr>
+                
+                <th>Hotel Name</th>
+                <th>Owner Name</th>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr data-id="@item.Id">
+                    <td>@item.HotelName</td>
+                    <td>@item.HotelName</td>
+                    <td>@item.OwnerName</td>
+                    <td>
+                        <span class="static-value">@item.ItemName</span>
+                        <input type="text" class="edit-value" value="@item.ItemName" style="display: none;">
+                    </td>
+                    <td>
+                        <span class="static-value">@item.Quantity</span>
+                        <input type="number" class="edit-value" value="@item.Quantity" style="display: none;">
+                    </td>
+                    <td>
+                        <span class="static-value">@item.UnitPrice</span>
+                        <input type="number" class="edit-value" value="@item.UnitPrice" style="display: none;">
+                    </td>
+                    <td>@item.TotalPrice</td>
+                    <td>
+                        <button class="edit-btn">Edit</button>
+                       
+                       
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".edit-btn").click(function () {
+                var row = $(this).closest("tr"); // Get the current row
+                row.addClass("edit-mode"); // Add edit mode class
+
+                row.find(".static-value").hide(); // Hide static text
+                row.find(".edit-value").show().first().focus(); // Show inputs and focus on first field
+            });
+
+            $(".edit-value").on("keypress", function (e) {
+                if (e.which === 13) { // Enter key pressed
+                    saveRow($(this).closest("tr"));
+                }
+            });
+
+            $(".edit-value").on("blur", function () {
+                saveRow($(this).closest("tr"));
+            });
+
+            function saveRow(row) {
+                var itemId = row.data("id"); // Get item ID
+                var updatedData = {
+                    Id: itemId,
+                    ItemName: row.find("input[type='text']").val(),
+                    Quantity: row.find("input[type='number']").eq(0).val(),
+                    UnitPrice: row.find("input[type='number']").eq(1).val()
+                };
+
+                $.ajax({
+                    url: '/HotelItems/UpdateItem', // Adjust based on your controller method
+                    type: 'POST',
+                    data: updatedData,
+                    success: function () {
+                        row.find(".static-value").each(function (index) {
+                            $(this).text(row.find(".edit-value").eq(index).val());
+                        });
+
+                        row.find(".static-value").show();
+                        row.find(".edit-value").hide();
+                        row.removeClass("edit-mode"); // Remove edit mode class
+                    },
+                    error: function () {
+                        alert("Error updating item.");
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

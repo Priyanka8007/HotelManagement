@@ -1,9 +1,11 @@
 ﻿using HotelManagement.Models;
+using HotelManagement.Models.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 
 namespace HotelManagement.Data
 {
@@ -13,8 +15,15 @@ namespace HotelManagement.Data
         {
         }
         public DbSet<Hotel> Hotels { get; set; } // DbSet for Hotel model
+        public DbSet<Item> Items { get; set; } // DbSet for Hotel model
+
+        // DbSet to represent the result of the stored procedure
+        public DbSet<HotelItemDetails> HotelItemDetails { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<HotelItemDetails>().HasNoKey();
+
             base.OnModelCreating(builder);
 
             var superAdminRoleId = "5d6ffabf-54fb-402e-9c56-5633c88bc123";

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HotelManagement.Models.Domain;
+using System.ComponentModel.DataAnnotations;
 
 namespace HotelManagement.Models
 {
@@ -39,6 +40,8 @@ namespace HotelManagement.Models
 
         [Required]
         public string UserNamee { get; set; }
+
+        public ICollection<Item> Items { get; set; } // Navigation property for related Items
 
 
 

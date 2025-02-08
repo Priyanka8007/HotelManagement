@@ -1,8 +1,6 @@
 ﻿@{
     Layout = null;
 }
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,19 +9,29 @@
     <title>Admin Page</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%; /* Ensure the body takes full height */
+        }
+
         body {
             font-family: Arial, sans-serif;
+            background-image: url('/Images/Third.jpg'); /* Replace with your image path */ background-size: cover; /* Cover entire screen */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* No tiling */
+            color: white; /* Ensure text is visible on the image */
         }
 
         .container {
             display: flex;
+            flex: 1;
+            padding: 20px;
         }
 
         .sidebar {
             width: 20%;
-            background-color: #f4f4f4;
             padding: 15px;
-            border-right: 1px solid #ccc;
         }
 
         .content {
@@ -42,55 +50,115 @@
 
                 .sidebar ul li a {
                     text-decoration: none;
-                    color: #007bff;
+                    color: #00bfff;
                     cursor: pointer;
                 }
 
                     .sidebar ul li a:hover {
                         text-decoration: underline;
                     }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent footer */
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+        }
+
+            footer a {
+                color: #00bfff;
+                text-decoration: none;
+            }
+
+                footer a:hover {
+                    text-decoration: underline;
+                }
+                .session{
+                    color:black
+                }
+
+        .session.p {
+            color: black
+        }
     </style>
 </head>
 <body>
-    <div>
+    <!-- Header -->
+    <div class="session">
         <h1>Welcome, @Context.Session.GetString("OwnerName")!</h1>
         <p>Hotel: @Context.Session.GetString("HotelName")</p>
     </div>
 
+    <!-- Main Content Area -->
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
             <h3>Hotel Management</h3>
             <ul>
-                <li><a href="#" class="nav-link" data-url="/Stock/Index">View Stock</a></li>
-                <li><a href="#" class="nav-link" data-url="/Stock/AddItem">Add Stock Item</a></li>
-                <li><a href="#" class="nav-link" data-url="/Bookings/Index">Manage Bookings</a></li>
+                <li><a href="#" class="nav-link" data-url="/Stock/Index">Add Stock Item</a></li>
+                <li>
+                    <a href="#" class="nav-link" data-url="/HotelItems/Index" data-hotelname="@Context.Session.GetString("HotelName")">
+                        View Stock Item
+                    </a>
+                </li>
+
+                <li><a href="#" class="nav-link" data-url="/HotelItems/Index">Add Stock Item</a></li>
                 <li><a href="#" class="nav-link" data-url="/Staff/Index">Manage Staff</a></li>
                 <li><a href="#" class="nav-link" data-url="/Reports/Index">View Reports</a></li>
             </ul>
         </div>
 
-        <!-- Main Content Area -->
+        <!-- Content Area -->
         <div class="content" id="content-area">
             <h2>Welcome to the Admin Dashboard</h2>
             <p>Select an option from the menu to manage your hotel's data.</p>
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer>
+        <p>
+            &copy; 2025 Your Hotel Name. All rights reserved. |
+            <a href="/PrivacyPolicy">Privacy Policy</a> |
+            <a href="/TermsOfService">Terms of Service</a>
+        </p>
+    </footer>
+
     <script>
+        // $(document).ready(function () {
+        //     $(".nav-link").click(function (e) {
+        //         e.preventDefault(); // Prevent default link behavior
+        //         var url = $(this).data("url"); // Get the URL from the data attribute
+
+        //         // Load the content into the content area
+        //         $("#content-area").load(url, function (response, status, xhr) {
+        //             if (status === "error") {
+        //                 $("#content-area").html("<p>Error loading page: " + xhr.status + " " + xhr.statusText + "</p>");
+        //             }
+        //         });
+        //     });
+        // });
+
         $(document).ready(function () {
             $(".nav-link").click(function (e) {
                 e.preventDefault(); // Prevent default link behavior
                 var url = $(this).data("url"); // Get the URL from the data attribute
+                var hotelName = $(this).data("hotelname"); // Get the hotelName from the data attribute
 
-                // Load the content into the content area
-                $("#content-area").load(url, function (response, status, xhr) {
+                // Make an AJAX request to load the content
+                $("#content-area").load(url + "?hotelName=" + encodeURIComponent(hotelName), function (response, status, xhr) {
                     if (status === "error") {
                         $("#content-area").html("<p>Error loading page: " + xhr.status + " " + xhr.statusText + "</p>");
                     }
                 });
             });
         });
+
+
+
     </script>
 </body>
 </html>

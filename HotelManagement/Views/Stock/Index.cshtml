@@ -1,4 +1,72 @@
 ﻿@{
-    Layout = null;
+   
+    Layout = null; // No layout applied
 }
-<h2>HIIIIII</h2>
+
+
+<h2>Stock Management</h2>
+
+<div class="form-container">
+    <form id="stockForm">
+        <div class="form-group">
+            <label for="itemName">Item Name:</label>
+            <input type="text" id="itemName" name="itemName" required />
+        </div>
+        <div class="form-group">
+            <label for="itemCategory">Item Category:</label>
+            <input type="text" id="itemCategory" name="itemCategory" required />
+        </div>
+        <div class="form-group">
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" required />
+        </div>
+        <div class="form-group">
+            <label for="unitPrice">Unit Price:</label>
+            <input type="number" id="unitPrice" name="unitPrice" step="0.01" required />
+        </div>
+        <div class="form-group">
+            <label for="dateAdded">Date Added:</label>
+            <input type="date" id="dateAdded" name="dateAdded" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+        </div>
+        <div class="form-group">
+            <label for="hotelId">Hotel ID:</label>
+            <input type="number" id="hotelId" name="hotelId" required />
+        </div>
+        <button type="button" class="btn-save" onclick="saveStock()">Save Stock</button>
+    </form>
+
+    <div id="message"></div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    function saveStock() {
+        const data = {
+            ItemName: $('#itemName').val(),
+            ItemCategory: $('#itemCategory').val(),
+            Quantity: parseInt($('#quantity').val(), 10),
+            UnitPrice: parseFloat($('#unitPrice').val()),
+            DateAdded: $('#dateAdded').val(),
+            HotelId: parseInt($('#hotelId').val(), 10)
+        };
+
+        $.ajax({
+            url: '/Stock/SaveStock',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                if (response.success) {
+                    $('#message').html(`<p style="color: green;">${response.message}</p>`);
+                    $('#stockForm')[0].reset(); // Clear the form
+                    $('#stockForm').hide(); // Hide the form
+                } else {
+                    $('#message').html(`<p style="color: red;">${response.message}</p>`);
+                }
+            },
+            error: function () {
+                $('#message').html('<p style="color: red;">An error occurred while saving stock.</p>');
+            }
+        });
+    }
+</script>
